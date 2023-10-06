@@ -76,7 +76,7 @@
               <v-btn
                 class="mx-2 botone"
                 color="primary"
-                @click="buyShoopping(product)"
+                @click="buyShooppingValidate(product)"
               >
                 Comprar
               </v-btn>
@@ -106,7 +106,12 @@
 <script setup>
 import ToolBar from "@/components/global/ToolBar";
 import { onMounted, ref } from "vue";
-import { useApiProduct, useApiShopping, useModuleLoader } from "@/stores";
+import {
+  useApiProduct,
+  useApiShopping,
+  useModuleLoader,
+  useModuleAlert,
+} from "@/stores";
 import { formatNumber_ } from "@/global";
 import { Product } from "@/schema";
 import ProductComponent from "@/components/admin/Product";
@@ -114,6 +119,7 @@ import ProductComponent from "@/components/admin/Product";
 const useProduct = useApiProduct();
 const useShopping = useApiShopping();
 const useLoader = useModuleLoader();
+const useAlert = useModuleAlert();
 
 const user = ref(JSON.parse(sessionStorage.user));
 const items = ref([]);
@@ -128,6 +134,14 @@ const handleFlag = () => {
   regProductRegister.value = Product();
 };
 
+const buyShooppingValidate = async (product) => {
+  useAlert.setAlert$({
+    type: "warning",
+    message: `¿Estas seguro que deseas comprar ${product.descript}?`,
+    func1: null,
+    func2: () => buyShoopping(product),
+  });
+};
 const buyShoopping = async (product) => {
   try {
     const buy = {
