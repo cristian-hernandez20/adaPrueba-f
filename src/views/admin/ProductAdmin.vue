@@ -92,7 +92,6 @@ const getProducts = async () => {
   try {
     const response = await useProduct.getProducts$();
     items.value = response;
-    console.log(response);
   } catch (error) {
     console.error(error);
   }

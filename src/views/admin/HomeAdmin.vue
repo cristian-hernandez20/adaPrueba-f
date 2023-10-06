@@ -54,9 +54,7 @@ onMounted(() => getUser());
 
 const getUser = async () => {
   try {
-    const response = await useUser.getUsers$();
-
-    console.log(response);
+    await useUser.getUsers$();
   } catch (error) {
     console.error(error);
   }

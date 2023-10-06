@@ -74,6 +74,9 @@ export const useApiShopping = defineStore("shopping", {
             console.error(error);
             toast.error(error);
             reject(error);
+          })
+          .finally(() => {
+            location.reload();
           });
       });
     },
