@@ -1,52 +1,22 @@
 import { defineStore } from "pinia";
-import { User, UserSchema } from "@/schema";
+import { Product } from "@/schema";
 import apiAxios from "../../api/apiAxios";
 import { toast } from "vue3-toastify";
 
-export const useApiUser = defineStore("user", {
+export const useApiProduct = defineStore("product", {
   state: () => ({
-    user: User,
+    product: Product,
   }),
   getters: {
-    getUser$() {
-      return this.user;
+    getProduct$() {
+      return this.product;
     },
   },
   actions: {
-    login$({ nameUser, password }) {
-      if ([nameUser, password].includes(null)) {
-        return toast.info("Los campos de usuario y contraseña son requeridos");
-      }
+    getProducts$() {
       return new Promise((resolve, reject) => {
         apiAxios({
-          url: "singIn",
-          method: "GET",
-          params: { nameUser, password },
-        })
-          .then((response) => {
-            if (response.success) resolve(response);
-            else {
-              toast.info(response.message);
-              if (response.error) return reject(response.error);
-              reject(response.message);
-            }
-          })
-          .catch((error) => {
-            console.error(error);
-            toast.error(error);
-            reject(error);
-          });
-      });
-    },
-    logOut$() {
-      sessionStorage.removeItem("user");
-      sessionStorage.removeItem("token");
-      location.reload();
-    },
-    getUsers$() {
-      return new Promise((resolve, reject) => {
-        apiAxios({
-          url: "get-users",
+          url: "get-products",
           method: "GET",
         })
           .then((response) => {
@@ -63,23 +33,43 @@ export const useApiUser = defineStore("user", {
           });
       });
     },
-    registerUser$({ user }) {
-      const missingFields = Object.keys(user).filter((e) => !user[e]);
-      if (missingFields.length > 0) {
-        missingFields.forEach((fieldName) => {
-          const findField = UserSchema()[fieldName].label;
-          toast.info(`El campo ${findField} es requerido`);
-        });
-        return Promise.reject("Campos requeridos faltantes");
-      }
-      user.phone = Number(user.phone);
-      user.identification = Number(user.identification);
+    registerProduct$({ product }) {
+      product.quantity = Number(product.quantity);
+      product.price = Number(product.price);
+
+      delete product.id;
 
       return new Promise((resolve, reject) => {
         apiAxios({
-          url: "register-user",
+          url: "register-product",
           method: "POST",
-          data: user,
+          data: product,
+        })
+          .then((response) => {
+            if (response.success) {
+              toast.success(response.message);
+              resolve(response);
+            } else {
+              toast.info(response.message);
+              reject(response.message);
+            }
+          })
+          .catch((error) => {
+            console.error(error);
+            toast.error(error);
+            reject(error);
+          });
+      });
+    },
+    editProduct$({ product }) {
+      product.quantity = Number(product.quantity);
+      product.price = Number(product.price);
+
+      return new Promise((resolve, reject) => {
+        apiAxios({
+          url: "edit-product",
+          method: "PUT",
+          data: product,
         })
           .then((response) => {
             if (response.success) {

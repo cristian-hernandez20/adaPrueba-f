@@ -1,7 +1,7 @@
 import { default as axios } from "axios";
 import { useModuleLoader } from "@/stores";
 
-const URl = `http://localhost:5025/api/v1/`;
+const URl = `http://localhost:5161/api/`;
 
 const apiAxios = ({
   url,
@@ -21,7 +21,7 @@ const apiAxios = ({
       headers: {
         ...header,
         Accept: "application/json",
-        Authorization: "Bearer " + sessionStorage._token,
+        Authorization: "Bearer " + sessionStorage.token,
       },
       responseType,
       validateStatus: function (status) {
@@ -33,8 +33,11 @@ const apiAxios = ({
       .then((res) => {
         if (res?.data?.msg?.status)
           reject(`Error http ${res?.data?.msg?.status}`);
-        if (res.data?.TOKEN) sessionStorage.TOKEN = res.data.TOKEN;
-        else resolve(res.data);
+        if (res.data?.data?.token) {
+          sessionStorage.user = JSON.stringify(res.data.data);
+          sessionStorage.token = res.data.data.token;
+          location.reload();
+        } else resolve(res.data);
       })
       .catch((error) => {
         const status = {

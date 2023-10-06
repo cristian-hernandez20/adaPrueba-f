@@ -8,6 +8,7 @@
       color="primary"
       validate-on="blur"
       @blur="skipFoco"
+      autocomplete="nope"
       :value="modelValue"
       hide-details="auto"
       @input="updateValue"
@@ -24,10 +25,13 @@
       :variant="field.variant || 'outlined'"
       :density="field.density || 'compact'"
       :prepend-inner-icon="field.prependInnerIcon"
-      :type="field.id == 'password' ? (visible ? 'text' : 'password') : 'text'"
+      :type="
+        field.id == 'password' ? (visible ? 'text' : 'password') : field.tipo
+      "
       :append-inner-icon="
         field.id == 'password' ? (visible ? 'mdi-eye-off' : 'mdi-eye') : ''
       "
+      oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);"
     ></v-text-field>
   </div>
 </template>
@@ -39,7 +43,7 @@ export default {
     field: {
       id: String,
       tipo: String,
-      rules: Object,
+      rules: Array,
       label: String,
       variant: String,
       density: String,

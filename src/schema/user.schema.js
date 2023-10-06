@@ -29,6 +29,7 @@ export const UserSchema = () => {
     phone: {
       id: "phone",
       label: "Teléfono",
+      tipo: "number",
       maxlength: 10,
     },
     identification: {
@@ -47,6 +48,12 @@ export const UserSchema = () => {
       label: "Contraseña",
       type: "password",
       maxlength: 10,
+      rules: [
+        (value) => {
+          if (value) return true;
+          return "You must enter a first name.";
+        },
+      ],
       prependInnerIcon: "mdi-lock",
     },
   };
